@@ -87,6 +87,7 @@ class SpringApplicationRunListeners {
 	private void callFailedListener(SpringApplicationRunListener listener, ConfigurableApplicationContext context,
 			Throwable exception) {
 		try {
+			// 对应不同listener的错误处理方法
 			listener.failed(context, exception);
 		}
 		catch (Throwable ex) {

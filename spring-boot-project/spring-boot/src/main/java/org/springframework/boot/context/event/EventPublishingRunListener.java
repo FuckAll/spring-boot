@@ -18,7 +18,6 @@ package org.springframework.boot.context.event;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ApplicationContextAware;
@@ -109,17 +108,19 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 		if (context != null && context.isActive()) {
 			// Listeners have been registered to the application context so we should
 			// use it at this point if we can
+			// 如果上下文处于可用状态，发布ApplicationFailedEvent事件
 			context.publishEvent(event);
-		}
-		else {
+		} else {
 			// An inactive context may not have a multicaster so we use our multicaster to
 			// call all of the context's listeners instead
+			// 一个不活跃的context可能没有多播方法，因此我们用我们的多播方法通知所有的context监听器
 			if (context instanceof AbstractApplicationContext) {
 				for (ApplicationListener<?> listener : ((AbstractApplicationContext) context)
 						.getApplicationListeners()) {
 					this.initialMulticaster.addApplicationListener(listener);
 				}
 			}
+			// 如果不是AbstractApplicationContext类型的context,通过加入log,并且多播事件
 			this.initialMulticaster.setErrorHandler(new LoggingErrorHandler());
 			this.initialMulticaster.multicastEvent(event);
 		}
